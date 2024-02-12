@@ -1,0 +1,81 @@
+@model UserManagement.Web.Models.Logs.LogListViewModel
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+
+@{
+    var userIdFilter = Context.Request.Query["userId"];
+    var logActionFilter = Context.Request.Query["logAction"];
+
+}
+
+<h2>Action Logs</h2>
+<h3>Total Logs (@Model.Items.Count)</h3>
+
+@if (!string.IsNullOrEmpty(userIdFilter) || !string.IsNullOrEmpty(logActionFilter) || !string.IsNullOrEmpty(ViewBag.startDateFilter) || !string.IsNullOrEmpty(ViewBag.endDateFilter))
+{
+    <p>Applied filter: 
+        @if (!string.IsNullOrEmpty(userIdFilter)) { <text>UserID: @userIdFilter</text> }
+        @if (!string.IsNullOrEmpty(logActionFilter)) { <text>, Action: @logActionFilter</text> }
+        @if (!string.IsNullOrEmpty(ViewBag.startDateFilter)) { <text>, Start Date: @ViewBag.startDateFilter</text> }
+        @if (!string.IsNullOrEmpty(ViewBag.endDateFilter)) { <text>, End Date: @ViewBag.endDateFilter</text> }
+    </p>
+    <a asp-controller="Logs" asp-action="List" class="btn btn-primary">Clear filter</a>
+}
+<form asp-controller="Logs" asp-action="List" method="get">
+    <input type="text" name="userId" placeholder="Search by UserID" value="@userIdFilter" />
+    <select name="logAction">
+        <option value="">Select an action</option>
+        @foreach (var action in ViewBag.AvailableActions)
+        {
+            if (ViewBag.logActionFilter == action)
+            {
+                <option value="@action" selected>@action</option>
+            }
+            else
+            {
+                <option value="@action">@action</option>
+            }
+        }
+    </select>
+    <label for="startDate">Start Date/Time</label>
+    <input type="datetime-local" name="startDate" placeholder="Start Date" value="@ViewBag.startDateFilter" />
+    <label for="endDate">End Date/Time</label>
+    <input type="datetime-local" name="endDate" placeholder="End Date" value="@ViewBag.endDateFilter" />
+    <button type="submit">Search</button>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>UserID</th>
+                <th>Action</th>
+                <th>TimeStamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Items)
+            {
+                <tr>
+                    <td>@log.UserId</td>
+                    <td>@log.Action</td>
+                    <td>@log.ActionDate</td>
+                    <td>
+                        <a asp-controller="Logs" asp-action="LogDetails" asp-route-id="@log.Id" class="btn btn-primary">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    Page @Model.CurrentPage of @Model.TotalPages
+    @if (Model.CurrentPage > 1)
+    {
+        <a asp-action="List" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+    }
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a asp-action="List" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+    }
+</div>

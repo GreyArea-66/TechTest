@@ -1,0 +1,58 @@
+@using UserManagement.Models;
+@model UserViewModel
+
+<h1>@Model.Forename @Model.Surname</h1>
+
+<form>
+    <div class="form-group">
+        <label asp-for="Id"></label>
+        <input asp-for="Id" class="form-control" readonly />
+    <div class="form-group">
+        <label asp-for="Forename"></label>
+        <input asp-for="Forename" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Surname"></label>
+        <input asp-for="Surname" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="DateOfBirth"></label>
+        <input asp-for="DateOfBirth" type="text" class="form-control" readonly />
+    </div>
+    <div class="form-group form-check">
+        <label asp-for="IsActive" class="form-check-label"></label>
+        <input asp-for="IsActive" type="checkbox" class="form-check-input" disabled/>
+    </div>
+</form>
+<h3>Action Log</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Action</th>
+            <th>Timestamp</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ActionLogs != null)
+        {
+            @foreach (var log in Model.ActionLogs)
+            {
+                <tr>
+                    <td>@log.Action</td>
+                    <td>@log.ActionDate</td>
+                    <td><a asp-controller="Users" asp-action="LogDetails" asp-route-id="@log.Id" class="btn btn-primary">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+<div class="form-group">
+    <a asp-controller="Users" asp-action="List" class="btn btn-primary">Back to List</a>
+</div>

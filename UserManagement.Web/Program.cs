@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Westwind.AspNetCore.Markdown;
+using UserManagement.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddDataAccess()
     .AddDomainServices()
+    .AddScoped<IUserActionLogSvc, UserActionLogSvc>()
     .AddMarkdown()
     .AddControllersWithViews();
 
